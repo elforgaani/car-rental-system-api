@@ -30,3 +30,10 @@ export const signInRequestBodyValidationSchema = yup.object({
         .required()
         .min(8, "Password must be more than 8 Chars"),
 });
+
+export const addCarRequestBodyValidationSchema = yup.object({
+    name: yup.string().required().min(5).max(20),
+    model: yup.string().required().min(4).max(4),
+    isRented: yup.boolean().required(),
+    // createdBy: yup.string().required().min(24).max(24).matches(/^[0-9A-Fa-f]+$/)
+})
