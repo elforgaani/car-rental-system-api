@@ -8,7 +8,7 @@ router.post('', authMiddleware, addCarRequestInputVlidationMiddleware, CarsContr
 router.get('/:id', authMiddleware, CarsController.getSpecificCar);
 router.get('/', authMiddleware, CarsController.getAllCars);
 router.put('/:id', authMiddleware, CarsController.updateCar);
-router.delete(':id', authMiddleware, CarsController.deleteCar);
+router.delete('/:id', authMiddleware, CarsController.deleteCar);
 
 
 export default router;
