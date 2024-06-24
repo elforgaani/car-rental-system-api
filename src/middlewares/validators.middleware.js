@@ -1,4 +1,5 @@
-import { addCarRequestBodyValidationSchema, signInRequestBodyValidationSchema, signUpRequestBodyValidationSchama } from "../utils/validation_schemas.js";
+
+import { addCarRequestBodyValidationSchema, createRentalRequestBodyValidationSchema, signInRequestBodyValidationSchema, signUpRequestBodyValidationSchama } from "../utils/validation_schemas.js";
 
 export const signUpRequestInputVaildatorMiddleware = async (req, res, next) => {
   const { name, email, phone_number, password } = req.body;
@@ -44,6 +45,23 @@ export const addCarRequestInputVlidationMiddleware = async (req, res, next) => {
     next();
   } catch (error) {
     const { errors } = error
+    res.status(400).json({
+      success: false,
+      message: "Error While parsing body",
+      errors
+    })
+  }
+}
+
+export const createRentalInputValidationMiddleware = async (req, res, next) => {
+  const { rentalDate, returnDate, carId } = req.body;
+  const rentalObject = { rentalDate, returnDate, carId };
+  try {
+    createRentalRequestBodyValidationSchema.validateSync(rentalObject);
+    req.rentalObject = rentalObject;
+    next();
+  } catch (error) {
+    const { errors } = error;
     res.status(400).json({
       success: false,
       message: "Error While parsing body",
