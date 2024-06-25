@@ -33,11 +33,28 @@ export const createRental = async (req, res) => {
   }
 };
 export const updateRental = async (req, res, next) => {};
+
 export const deleteRental = async (req, res, next) => {};
+
 export const getAllrentals = async (req, res, next) => {
   try {
     const rentals = await Rental.find();
     res.status(200).json({ success: true, data: rentals });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json(internalServerErrorResponse);
+  }
 };
-export const getSpecificRental = async (req, res, next) => {};
+export const getSpecificRental = async (req, res, next) => {
+  const { id: rentalId } = req.params;
+  try {
+    const rental = await Rental.findById(rentalId);
+    if (!rental) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Rental Does not Exist" });
+    }
+    res.status(200).json({ success: true, data: rental });
+  } catch (error) {
+    res.status(500).json(internalServerErrorResponse);
+  }
+};
