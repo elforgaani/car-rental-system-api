@@ -117,3 +117,61 @@ export const deleteCar = async (req, res, next) => {
     res.status(500).json(internalServerErrorResponse);
   }
 };
+
+
+export const getCarsBasedOnModel = async (req, res) => {
+  const { model1, model2 } = req.query;
+  try {
+    const cars = await Car.find({ $or: [{ name: model1 }, { name: model2 }] });
+
+
+    res.status(200).json({ success: true, data: cars })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(internalServerErrorResponse);
+  }
+}
+
+export const getAvailableCars = async (req, res, next) => {
+  const { model } = req.query;
+  if (!model) {
+    return res.status(400).json({ success: false, message: "Model is required" });
+  }
+  try {
+
+    const cars = await Car.find({ name: model, isRented: false });
+    res.status(200).json({ success: true, data: cars });
+  } catch (error) {
+    res.status(500).json(internalServerErrorResponse);
+    res.status(500).json(internalServerErrorResponse);
+
+  }
+}
+
+export const rentedOrByName = async (req, res, next) => {
+  const { model } = req.query;
+  console.log(model);
+  const isRented = model ? null : true;
+  console.log(isRented);
+  try {
+    const cars = await Car.find({ $or: [{ name: model }, { isRented }] })
+    res.status(200).json({ success: true, data: cars });
+  } catch (error) {
+    res.status(500).json(internalServerErrorResponse);
+  }
+}
+
+export const availableOrRented = async (req, res, next) => {
+  const { isRented, model } = req.query;
+  if (!isRented || !model || !(isRented === 'true' || isRented === 'false')) {
+    
+    return res.status(400).json({ success: false, message: "Parameters Can't be null" });
+  }
+  try {
+    const cars = await Car.find({ $and: [{ name: model }, { isRented }] })
+    res.status(200).json({ success: true, data: cars })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(internalServerErrorResponse);
+  }
+}
