@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const dbConnection = async () => {
-  const dbInfo = `${process.env.DB_HOST}/${process.env.DB_NAME}`;
+  const dbInfo = process.env.MONGOATLAS_URL;
   try {
     await mongoose.connect(dbInfo);
     console.log("Database Connected Successfully");
