@@ -20,7 +20,7 @@ export const createRental = async (req, res) => {
       });
     }
     const rental = await Rental.create(rentalObject);
-    const catUpdateResults = await Car.findByIdAndUpdate(rentalObject.carId, {
+    await Car.findByIdAndUpdate(rentalObject.carId, {
       isRented: true,
     });
     res.status(201).json({
@@ -32,13 +32,36 @@ export const createRental = async (req, res) => {
     res.status(500).json(internalServerErrorResponse);
   }
 };
-export const updateRental = async (req, res, next) => {};
+export const updateRental = async (req, res, next) => {
+  const { rentalDate, returnDate, carId, rentedBy } = req.body;
+  const { id: rentalId } = req.params
+  try {
+    const result = await Rental.findByIdAndUpdate(rentalId, { rentalDate, returnDate, carId, rentedBy });
+    if (!result) {
+      return res.status(404).json({ success: false, message: "Rental Does not Exist" });
+    }
+    res.status(200).json({ success: true, message: "Rental Updated Successfully" });
+  } catch (error) {
+    res.status(500).json(internalServerErrorResponse);
+  }
+};
 
-export const deleteRental = async (req, res, next) => {};
+export const deleteRental = async (req, res, next) => {
+  const { id: rentalId } = req.params;
+  try {
+    const result = await Rental.findByIdAndDelete(rentalId);
+    if (!result) {
+      return res.status(404).json({ success: false, message: "Rental Does not Exist" });
+    }
+    res.status(200).json({ success: true, message: "Rental Deleted Successfully" });
+  } catch (error) {
+    res.status(500).json(internalServerErrorResponse);
+  }
+};
 
 export const getAllrentals = async (req, res, next) => {
   try {
-    const rentals = await Rental.find();
+    const rentals = await Rental.find().populate([{ path: 'rentedBy', select: 'name email' }, { path: 'carId', select: 'name model isRented' }]);
     res.status(200).json({ success: true, data: rentals });
   } catch (error) {
     res.status(500).json(internalServerErrorResponse);
